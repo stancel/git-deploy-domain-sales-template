@@ -16,10 +16,10 @@ git_deploy_domain_sales_template_buy_now_amount: "$2500"
 # List of sites to setup Git deployments for. Not needed unless the "git_deploy_domain_sales_template_use_list" variable is set to true. Default is true.
 git_deploy_domain_sales_template_sites_to_setup:
   - {
-      name: "somesite"
-      template_type: 'domain-sales'
-      display_name: "SomeSite.com",
-      buy_now_amount: "$2500"
+      name: 'somesite',
+      template_type: 'domain-sales',
+      display_name: 'SomeSite.com',
+      buy_now_amount: '$2500'
     }
 
 

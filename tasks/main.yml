@@ -194,21 +194,21 @@
     - name: "Debugging the web files path variable"
       debug: var=git_deploy_domain_sales_template_web_directory_for_application
 
-#    - name: "Clearing out existing web/install directory"
-#      file: 
-#        state: absent 
-#        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
-#      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+    - name: "Clearing out existing web/install directory"
+      file: 
+        state: absent 
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
 
-#    - name: "Re-creating web/install directory"
-#      file:
-#        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
-#        state: directory
-#        owner: "{{ item.name }}"
-#        group: "{{ git_deploy_domain_sales_template_web_group }}"
-#        mode: 0644
-#        recurse: yes
-#      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+    - name: "Re-creating web/install directory"
+      file:
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+        state: directory
+        owner: "{{ item.name }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+        recurse: yes
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
 
     ##  End - Prepping directory for web application / site
 
