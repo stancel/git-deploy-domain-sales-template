@@ -1,0 +1,16 @@
+---
+# handlers file for git-deploy-domain-sales-template
+
+# Need to check for Apache or NginX and restart the appropriate one
+
+- name: restart apache
+  service: 
+    name: apache2 
+    state: restarted
+    enabled: yes
+
+- name: restart nginx
+  service: 
+    name: nginx 
+    state: restarted
+    enabled: yes

@@ -1,0 +1,30 @@
+galaxy_info:
+  author: 'Brad Stancel'
+  
+  description: "Deploys a templated domain brokering HTML sales site via a Git repo and custom templates."
+  
+  company: YourOnlineDept.com
+
+  license: GPLv3
+
+  min_ansible_version: 2.4
+
+
+  github_branch: master
+  
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+    - xenial
+  - name: Debian
+    versions:
+    - wheezy
+    - jessie
+    - stretch
+
+  galaxy_tags: 
+    - deploy
+    - html
+
+dependencies: []

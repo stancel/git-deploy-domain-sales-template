@@ -1,0 +1,346 @@
+---
+# tasks file for git-deploy-domain-sales-template
+
+
+- name: "Only working on deploying one site"
+  block:
+
+    ##  Handle any dependencies
+
+    # None needed
+
+    ##  End - Handle any dependencies
+
+
+    ##  Set needed PHP configuration
+
+    # Not needed
+
+    ##  End - Set needed PHP configuration
+
+
+    ##  Set Timezone on Server (if required)
+
+    # Not needed
+
+    ##  End Set Timezone on Server (if required)
+
+
+    ##  Prepping directory for web application / site
+
+    - name: "Debugging the web files path variable"
+      debug: var=git_deploy_domain_sales_template_web_files_path
+
+    - name: "Debugging the web files path variable"
+      debug: var=git_deploy_domain_sales_template_web_directory_for_application
+
+    - name: "Clearing out existing web/install directory"
+      file: 
+        state: absent 
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+
+    - name: "Re-creating web/install directory"
+      file:
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+        state: directory
+        owner: "{{ git_deploy_domain_sales_template_web_user }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+        recurse: yes
+
+    ##  End - Prepping directory for web application / site
+
+
+    ##  Deploy files from Git repo
+
+    - name: "Git clone the repo"
+      command: git clone {{ git_deploy_domain_sales_template_git_repo }} {{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}"
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+
+    - name: "Debugging the git_deploy_domain_sales_template_git_branch variable"
+      debug: var=git_deploy_domain_sales_template_git_branch
+
+    - name: "Debugging the git_deploy_domain_sales_template_tagged_release_version variable"
+      debug: var=git_deploy_domain_sales_template_tagged_release_version
+
+    - name: "Checkout the desired release"
+      command: git checkout {{ git_deploy_domain_sales_template_tagged_release_version }}
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+      when: (git_deploy_domain_sales_template_tagged_release_version != "") and 
+              (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+
+    - name: "Checkout the desired branch"
+      command: git checkout {{ git_deploy_domain_sales_template_git_branch }}
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+      when: (git_deploy_domain_sales_template_git_branch != "") and 
+              (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+
+    ##  End - Deploy files from Git repo
+
+
+    ##  Handle any template files
+
+    - name: "Move over the templated HTML file to index.html"
+      template:
+        src: 'index-16.html.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/index.html'
+        owner: "{{ git_deploy_domain_sales_template_web_user }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+
+    - name: "Move over the contact.php file"
+      template:
+        src: 'php/contact.php.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/php/contact.php'
+        owner: "{{ git_deploy_domain_sales_template_web_user }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+
+    - name: "Move over the make-offer.php file"
+      template:
+        src: 'php/make-offer.php.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/php/make-offer.php'
+        owner: "{{ git_deploy_domain_sales_template_web_user }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+
+    ##  End - Handle any template files
+
+
+    ##  Create and/or handle any DB related tasks
+
+    # Not needed
+
+    ##  End - Create and/or handle any DB related tasks
+
+
+    ##  Trigger any application / site specific deployment tasks (if not handled elsewhere)
+
+    # Not needed
+
+    ##  Trigger any application / site specific deployment tasks
+
+
+    ##  Set proper permissions for web application / site
+
+    - name: "Setting ownership and permissions for web directory"
+      file: 
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+        state: directory 
+        owner: "{{ git_deploy_domain_sales_template_web_user }}" 
+        group: "{{ git_deploy_domain_sales_template_web_group }}" 
+        mode: g+s
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+
+    - name: "Ensure directories are 0755"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }} -type d -exec chmod -c 0755 {} \;
+      register: chmod_result     
+      changed_when: "chmod_result.stdout != \"\""
+
+    - name: "Ensure files are 0644"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }} -type f -exec chmod -c 0644 {} \;
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+
+    - name: "Set user and group ownership for all existing files and directories"
+      command: chown -R {{ git_deploy_domain_sales_template_web_user }}:{{ git_deploy_domain_sales_template_web_group }} {{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+
+    - name: "Ensure newly created directories and files have a group of {{ git_deploy_domain_sales_template_web_group }}"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }} -type d -exec chmod g+s {} \;
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+
+    ##  End - Set proper permissions for web application / site
+
+  when: not git_deploy_domain_sales_template_use_list
+
+
+
+- name: "Passing a list of sites to deploy templates to"
+  block:
+
+    ##  Handle any dependencies
+
+    # None needed
+
+    ##  End - Handle any dependencies
+
+
+    ##  Set needed PHP configuration
+
+    # Not needed
+
+    ##  End - Set needed PHP configuration
+
+
+    ##  Set Timezone on Server (if required)
+
+    # Not needed
+
+    ##  End Set Timezone on Server (if required)
+
+
+    ##  Prepping directory for web application / site
+
+    - name: "Debugging the web files path variable"
+      debug: var=git_deploy_domain_sales_template_web_files_path
+
+    - name: "Debugging the web files path variable"
+      debug: var=git_deploy_domain_sales_template_web_directory_for_application
+
+#    - name: "Clearing out existing web/install directory"
+#      file: 
+#        state: absent 
+#        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+#      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+
+#    - name: "Re-creating web/install directory"
+#      file:
+#        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+#        state: directory
+#        owner: "{{ item.name }}"
+#        group: "{{ git_deploy_domain_sales_template_web_group }}"
+#        mode: 0644
+#        recurse: yes
+#      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+
+    ##  End - Prepping directory for web application / site
+
+
+    ##  Deploy files from Git repo
+
+    - name: "Git clone the repo"
+      command: git clone {{ git_deploy_domain_sales_template_git_repo }} {{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}"
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade") 
+              and (item.template_type == 'domain-sales')
+
+    - name: "Debugging the git_deploy_domain_sales_template_git_branch variable"
+      debug: var=git_deploy_domain_sales_template_git_branch
+
+    - name: "Debugging the git_deploy_domain_sales_template_tagged_release_version variable"
+      debug: var=git_deploy_domain_sales_template_tagged_release_version
+
+    - name: "Checkout the desired release"
+      command: git checkout {{ git_deploy_domain_sales_template_tagged_release_version }}
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_tagged_release_version != "") and 
+              (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade") 
+              and (item.template_type == 'domain-sales')
+
+    - name: "Checkout the desired branch"
+      command: git checkout {{ git_deploy_domain_sales_template_git_branch }}
+      args: 
+        chdir: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_git_branch != "") and 
+              (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
+
+    ##  End - Deploy files from Git repo
+
+
+    ##  Handle any template files
+
+    - name: "Move over the templated HTML file to index.html"
+      template:
+        src: 'index-16.html.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/index.html'
+        owner: "{{ item.name }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
+
+    - name: "Move over the contact.php file"
+      template:
+        src: 'php/contact.php.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/php/contact.php'
+        owner: "{{ item.name }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
+
+    - name: "Move over the make-offer.php file"
+      template:
+        src: 'php/make-offer.php.j2'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/php/make-offer.php'
+        owner: "{{ item.name }}"
+        group: "{{ git_deploy_domain_sales_template_web_group }}"
+        mode: 0644
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
+
+    ##  End - Handle any template files
+
+
+    ##  Create and/or handle any DB related tasks
+
+    # Not needed
+
+    ##  End - Create and/or handle any DB related tasks
+
+
+    ##  Trigger any application / site specific deployment tasks (if not handled elsewhere)
+
+    # Not needed
+
+    ##  Trigger any application / site specific deployment tasks
+
+
+    ##  Set proper permissions for web application / site
+
+    - name: "Setting ownership and permissions for web directory"
+      file: 
+        path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
+        state: directory 
+        owner: "{{ item.name }}" 
+        group: "{{ git_deploy_domain_sales_template_web_group }}" 
+        mode: g+s
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade") 
+              and (item.template_type == 'domain-sales')
+
+    - name: "Ensure directories are 0755"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/ -type d -exec chmod -c 0755 {} \;
+      register: chmod_result
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'      
+      changed_when: "chmod_result.stdout != \"\""
+
+    - name: "Ensure files are 0644"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/ -type f -exec chmod -c 0644 {} \;
+      register: chmod_result
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      changed_when: "chmod_result.stdout != \"\""
+
+    - name: "Set user and group ownership for all existing files and directories"
+      command: chown -R {{ item.name }}:{{ git_deploy_domain_sales_template_web_group }} {{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+
+    - name: "Ensure newly created directories and files have a group of {{ git_deploy_domain_sales_template_web_group }}"
+      command: find {{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/ -type d -exec chmod g+s {} \;
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+      with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}' 
+
+    ##  End - Set proper permissions for web application / site
+
+  when: git_deploy_domain_sales_template_use_list
+
+
