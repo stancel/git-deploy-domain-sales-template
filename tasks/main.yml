@@ -96,7 +96,7 @@
     - name: "Move over the contact.php file"
       template:
         src: 'php/contact.php.j2'
-        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/php/contact.php'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/assets/php/contact.php'
         owner: "{{ git_deploy_domain_sales_template_web_user }}"
         group: "{{ git_deploy_domain_sales_template_web_group }}"
         mode: 0644
@@ -104,7 +104,7 @@
     - name: "Move over the make-offer.php file"
       template:
         src: 'php/make-offer.php.j2'
-        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/php/make-offer.php'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}/assets/php/make-offer.php'
         owner: "{{ git_deploy_domain_sales_template_web_user }}"
         group: "{{ git_deploy_domain_sales_template_web_group }}"
         mode: 0644
@@ -271,7 +271,7 @@
     - name: "Move over the contact.php file"
       template:
         src: 'php/contact.php.j2'
-        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/php/contact.php'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/assets/php/contact.php'
         owner: "{{ item.name }}"
         group: "{{ git_deploy_domain_sales_template_web_group }}"
         mode: 0644
@@ -282,7 +282,7 @@
     - name: "Move over the make-offer.php file"
       template:
         src: 'php/make-offer.php.j2'
-        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/php/make-offer.php'
+        dest: '{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www/assets/php/make-offer.php'
         owner: "{{ item.name }}"
         group: "{{ git_deploy_domain_sales_template_web_group }}"
         mode: 0644
