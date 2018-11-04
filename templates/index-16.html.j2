@@ -55,7 +55,7 @@ License: You must have a valid license purchased only from themeforest in order 
                                 <div class="row pt-60">
                                     <div class="col-md-10 col-md-offset-1 t-center">
                                         <h3 class="font-24 t-uppercase mb-30">Premium web domain, estimated value {{ item.buy_now_amount | default(git_deploy_domain_sales_template_buy_now_amount) }}</h3>
-                                        <h1 class="h1 t-uppercase mb-30"><span id="domainName">{{ item.display_name | default(git_deploy_domain_sales_template_domain_display_name) }}</span> is for sale!</h1>
+                                        <h1 class="h1 t-uppercase mb-30">{{ item.display_name | default(git_deploy_domain_sales_template_domain_display_name) }} is for sale!</h1>
                                         <h5>{{ git_deploy_domain_sales_template_call_to_action }}</h5>
                                     </div>
                                 </div>
