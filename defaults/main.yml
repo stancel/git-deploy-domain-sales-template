@@ -13,9 +13,11 @@ git_deploy_domain_sales_template_call_to_action: "Interested in buying this doma
 # Site Title
 git_deploy_domain_sales_template_site_title: "{{ item.display_name | default(git_deploy_domain_sales_template_domain_display_name) }} For Sale"
 
-
 # Will you be passing a list of domains to deploy templates to?
 git_deploy_domain_sales_template_use_list: true
+
+# Delete /clear out the web directory before git clone is called
+git_deploy_domain_sales_template_force_clearing: false
 
 # The default git repo to use when downloading and installing the application / template
 git_deploy_domain_sales_template_git_repo: "https://github.com/stancel/domain-sales-template.git"

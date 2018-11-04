@@ -38,6 +38,7 @@
       file: 
         state: absent 
         path: "{{ git_deploy_domain_sales_template_web_files_path }}{{ git_deploy_domain_sales_template_web_directory_for_application }}"
+      when: git_deploy_domain_sales_template_force_clearing
 
     - name: "Re-creating web/install directory"
       file:
@@ -199,6 +200,8 @@
         state: absent 
         path: "{{ git_deploy_domain_sales_template_web_files_path }}/{{ item.name }}/www"
       with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
 
     - name: "Re-creating web/install directory"
       file:
@@ -209,7 +212,9 @@
         mode: 0644
         recurse: yes
       with_items: '{{ git_deploy_domain_sales_template_sites_to_setup }}'
-
+      when: (git_deploy_domain_sales_template_installation_type == "new" or git_deploy_domain_sales_template_installation_type == "upgrade")
+              and (item.template_type == 'domain-sales')
+              
     ##  End - Prepping directory for web application / site
 
 
